@@ -1,19 +1,19 @@
-# Licensed to the Apache Software Foundation (ASF) under one or more
-# contributor license agreements.  See the NOTICE file distributed with
-# this work for additional information regarding copyright ownership.
-# The ASF licenses this file to You under the Apache License, Version 2.0
-# (the "License"); you may not use this file except in compliance with
-# the License.  You may obtain a copy of the License at
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements. See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership. The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License. You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#   http://www.apache.org/licenses/LICENSE-2.0
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
----
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied. See the License for the
+# specific language governing permissions and limitations
+# under the License.
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -56,42 +56,16 @@ spec:
       containers:
       - name: postgres
         env:
-        - name: POSTGRES_DB
-          value: testdb
-        - name: POSTGRES_USER
-          value: postgres
-        - name: POSTGRES_PASSWORD
+        - name: POSTGRESQL_ADMIN_PASSWORD
           valueFrom:
             secretKeyRef:
               key: rootpassword
               name: {{.SecretName}}
         image: {{.Base.Spec.Postgres.Image}}:{{.Base.Spec.Postgres.Version}}
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          exec:
-            command:
-            - bash
-            - -c
-            - psql -w -U $POSTGRES_USER -d $POSTGRES_DB -c SELECT 1
-          failureThreshold: 3
-          initialDelaySeconds: 30
-          periodSeconds: 20
-          successThreshold: 1
-          timeoutSeconds: 5
+        imagePullPolicy: Always
         ports:
         - containerPort: 5432
           name: postgres
-        readinessProbe:
-          exec:
-            command:
-            - bash
-            - -c
-            - psql -w -U $POSTGRES_USER -d $POSTGRES_DB -c SELECT 1
-          failureThreshold: 3
-          initialDelaySeconds: 10
-          periodSeconds: 5
-          successThreshold: 1
-          timeoutSeconds: 2
         volumeMounts:
         - name: data
           mountPath: /var/lib/postgres/data

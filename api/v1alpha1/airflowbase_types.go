@@ -29,7 +29,7 @@ const (
 	DefaultMySQLImage      = "mysql"
 	DefaultMySQLVersion    = "5.7"
 	DefaultPostgresImage   = "postgres"
-	DefaultPostgresVersion = "9.5"
+	DefaultPostgresVersion = "10"
 	defaultUIImage         = "gcr.io/airflow-operator/airflow"
 	defaultUIVersion       = "1.10.2"
 	defaultFlowerVersion   = "1.10.2"

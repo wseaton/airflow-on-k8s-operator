@@ -66,16 +66,16 @@ type AirflowClusterReconciler struct {
 }
 
 // +kubebuilder:rbac:groups=apps,resources=statefulsets,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=,resources=services,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=,resources=configmaps,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups="",resources=services,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups="",resources=configmaps,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=app.k8s.io,resources=applications,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=policy,resources=poddisruptionbudgets,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=rolebindings,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=,resources=secrets,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=,resources=serviceaccounts,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups="",resources=secrets,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups="",resources=serviceaccounts,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=storage.k8s.io,resources=storageclasses,verbs=get;list;watch;create;update;patch;delete
 
-// +kubebuilder:rbac:groups=airflow.apache.org,resources=airflowclusters,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=airflow.apache.org,resources=airflowclusters;airflowclusters/finalizers,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=airflow.apache.org,resources=airflowclusters/status,verbs=get;update;patch
 
 // Reconcile - Dummy TODO remove this
@@ -248,7 +248,7 @@ EOSQL
 	ss.Spec.Template.Spec.InitContainers = append(containers, ss.Spec.Template.Spec.InitContainers...)
 }
 
-func addPostgresUserDBContainer(r *alpha1.AirflowCluster, ss *appsv1.StatefulSet) {
+func addPostgresUserDBContainer(r *alpha1.AirflowCluster, ss *appsv1.StatefulSet, image_tag string) {
 	sqlRootSecret := common.RsrcName(r.Spec.AirflowBaseRef.Name, common.ValueAirflowComponentSQL, "")
 	sqlSvcName := common.RsrcName(r.Spec.AirflowBaseRef.Name, common.ValueAirflowComponentSQL, "")
 	sqlSecret := common.RsrcName(r.Name, common.ValueAirflowComponentUI, "")
@@ -263,7 +263,7 @@ func addPostgresUserDBContainer(r *alpha1.AirflowCluster, ss *appsv1.StatefulSet
 	containers := []corev1.Container{
 		{
 			Name:    "postgres-dbcreate",
-			Image:   alpha1.DefaultPostgresImage + ":" + alpha1.DefaultPostgresVersion,
+			Image:   image_tag,
 			Env:     env,
 			Command: []string{"/bin/bash"},
 			Args: []string{"-c", `
@@ -336,6 +336,7 @@ func getAirflowEnv(r *alpha1.AirflowCluster, saName string, base *alpha1.Airflow
 		{Name: "SQL_USER", Value: sp.Scheduler.DBUser},
 		{Name: "SQL_DB", Value: sp.Scheduler.DBName},
 		{Name: "DB_TYPE", Value: dbType},
+		{Name: "C_FORCE_ROOT", Value: sp.Worker.ForceRoot},
 	}
 	if sp.Executor == alpha1.ExecutorK8s {
 		env = append(env, []corev1.EnvVar{
@@ -512,7 +513,7 @@ func (s *UI) sts(o *reconciler.Object, v interface{}) {
 	sts, r := updateSts(o, v)
 	sts.Spec.Template.Spec.Containers[0].Resources = r.Cluster.Spec.UI.Resources
 	if IsPostgres(&r.Base.Spec) {
-		addPostgresUserDBContainer(r.Cluster, sts)
+		addPostgresUserDBContainer(r.Cluster, sts, r.Base.Spec.Postgres.Image+":"+r.Base.Spec.Postgres.Version)
 	} else {
 		addMySQLUserDBContainer(r.Cluster, sts)
 	}

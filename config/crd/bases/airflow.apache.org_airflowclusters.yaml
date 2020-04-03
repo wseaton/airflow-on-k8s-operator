@@ -1468,6 +1468,9 @@ spec:
             worker:
               description: Spec for Airflow Workers
               properties:
+                forceroot:
+                  description: Celery Worker force root
+                  type: string
                 image:
                   description: Image defines the Airflow worker Docker image.
                   type: string

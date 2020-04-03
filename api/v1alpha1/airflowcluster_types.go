@@ -47,6 +47,7 @@ const (
 	defaultBranch           = "master"
 	defaultWorkerVersion    = "1.10.2"
 	defaultSchedulerVersion = "1.10.2"
+	defaultWorkerForceRoot  = "false"
 )
 
 var (
@@ -228,6 +229,8 @@ type WorkerSpec struct {
 	Replicas int32 `json:"replicas,omitempty"`
 	// Resources is the resource requests and limits for the pods.
 	Resources corev1.ResourceRequirements `json:"resources,omitempty"`
+	//Celery Worker force root
+	ForceRoot string `json:"forceroot,omitempty"`
 }
 
 func (s *WorkerSpec) validate(fp *field.Path) field.ErrorList {
@@ -506,6 +509,9 @@ func (b *AirflowCluster) ApplyDefaults() {
 		}
 		if b.Spec.Executor == ExecutorK8s {
 			b.Spec.Worker.Replicas = 0
+		}
+		if b.Spec.Worker.ForceRoot == "" {
+			b.Spec.Worker.ForceRoot = defaultWorkerForceRoot
 		}
 	}
 	if b.Spec.DAGs != nil {
