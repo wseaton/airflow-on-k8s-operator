@@ -544,15 +544,7 @@ func (s *UI) Objects(rsrc interface{}, rsrclabels map[string]string, observed, d
 		WithTemplate("ui-sts.yaml", &appsv1.StatefulSetList{}, s.sts).
 		WithTemplate("secret.yaml", &corev1.SecretList{}, reconciler.NoUpdate).
 		WithTemplate("svc.yaml", &corev1.ServiceList{}).
-		WithTemplate("serviceaccount.yaml", &corev1.ServiceAccountList{}, s.sa).
-		WithTemplate("ui-role.yaml", &rbacv1.RoleList{}).
-		WithTemplate("rolebinding.yaml", &rbacv1.RoleBindingList{})
-
-	if r.Spec.UI.EnableRoutes == true {
-		bag.WithTemplate("route.yaml", &routev1.RouteList{})
-	}
-
-	return bag.Build()
+		Build()
 }
 
 func (s *UI) sts(o *reconciler.Object, v interface{}) {
