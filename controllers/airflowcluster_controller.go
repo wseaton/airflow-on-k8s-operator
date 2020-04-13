@@ -506,6 +506,7 @@ func (s *UI) Objects(rsrc interface{}, rsrclabels map[string]string, observed, d
 		WithValue(ngdata).
 		WithTemplate("ui-sts.yaml", &appsv1.StatefulSetList{}, s.sts).
 		WithTemplate("secret.yaml", &corev1.SecretList{}, reconciler.NoUpdate).
+		WithTemplate("svc.yaml", &corev1.ServiceList{}).
 		Build()
 }
 
