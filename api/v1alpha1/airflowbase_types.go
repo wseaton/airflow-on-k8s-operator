@@ -276,6 +276,31 @@ func validStorageProvider(provider string) bool {
 	return false
 }
 
+// AirflowUISpec defines the attributes to deploy Airflow UI component
+type AirflowUISpec struct {
+	// Image defines the AirflowUI Docker image.
+	// +optional
+	Image string `json:"image,omitempty"`
+	// Version defines the AirflowUI Docker image version.
+	// +optional
+	Version string `json:"version,omitempty"`
+	// Replicas defines the number of running Airflow UI instances in a cluster
+	// +optional
+	Replicas int32 `json:"replicas,omitempty"`
+	// Resources is the resource requests and limits for the pods.
+	// +optional
+	Resources corev1.ResourceRequirements `json:"resources,omitempty"`
+	// enableroutes: true enables routes for the AirflowUI and CeleryUI
+	// +optional, enable on OpenShift clusters only
+	EnableRoutes bool `json:"enableroutes,omitempty"`
+}
+
+func (s *AirflowUISpec) validate(fp *field.Path) field.ErrorList {
+	errs := field.ErrorList{}
+	//errs = append(errs, s.Resources.validate(fp.Child("resources"))...)
+	return errs
+}
+
 // NFSStoreSpec defines the attributes to deploy Airflow Storage component
 type NFSStoreSpec struct {
 	// Image defines the NFS Docker image.

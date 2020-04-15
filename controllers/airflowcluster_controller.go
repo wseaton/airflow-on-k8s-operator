@@ -33,7 +33,6 @@ import (
 	"github.com/apache/airflow-on-k8s-operator/controllers/application"
 	"github.com/apache/airflow-on-k8s-operator/controllers/common"
 	app "github.com/kubernetes-sigs/application/pkg/apis/app/v1beta1"
-	oauthv1 "github.com/openshift/api/oauth/v1"
 	routev1 "github.com/openshift/api/route/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -511,9 +510,6 @@ func (s *UI) Observables(rsrc interface{}, labels map[string]string, dependent [
 		For(&appsv1.StatefulSetList{}).
 		For(&corev1.SecretList{}).
 		For(&corev1.ServiceList{}).
-		For(&corev1.ServiceAccountList{}).
-		For(&rbacv1.RoleList{}).
-		For(&rbacv1.RoleBindingList{}).
 		For(&routev1.RouteList{}).
 		Get()
 }
@@ -539,9 +535,13 @@ func (s *UI) Objects(rsrc interface{}, rsrclabels map[string]string, observed, d
 		"password": base64.StdEncoding.EncodeToString(common.RandomAlphanumericString(16)),
 	}
 
-	bag := k8s.NewObjects().
-		WithValue(ngdata).
-		WithTemplate("ui-sts.yaml", &appsv1.StatefulSetList{}, s.sts).
+	bag := k8s.NewObjects()
+	bag.WithValue(ngdata)
+	if r.Spec.UI.EnableRoutes == true {
+		bag.WithTemplate("route.yaml", &routev1.RouteList{})
+	}
+
+	return bag.WithTemplate("ui-sts.yaml", &appsv1.StatefulSetList{}, s.sts).
 		WithTemplate("secret.yaml", &corev1.SecretList{}, reconciler.NoUpdate).
 		WithTemplate("svc.yaml", &corev1.ServiceList{}).
 		Build()
@@ -901,8 +901,13 @@ func (s *Flower) Objects(rsrc interface{}, rsrclabels map[string]string, observe
 	}
 	ngdata := acTemplateValue(r, dependent, common.ValueAirflowComponentFlower, rsrclabels, rsrclabels, map[string]string{"flower": "5555"})
 
-	bag := k8s.NewObjects().
-		WithValue(ngdata).
+	bag := k8s.NewObjects()
+	bag.WithValue(ngdata)
+	if r.Spec.Flower.EnableRoutes == true {
+		bag.WithTemplate("route.yaml", &routev1.RouteList{})
+	}
+
+	return bag.WithTemplate("svc.yaml", &corev1.ServiceList{}).
 		WithTemplate("flower-sts.yaml", &appsv1.StatefulSetList{}, s.sts).
 		WithTemplate("svc.yaml", &corev1.ServiceList{})
 

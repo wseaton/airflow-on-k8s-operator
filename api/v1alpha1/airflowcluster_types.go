@@ -192,9 +192,9 @@ type FlowerSpec struct {
 	// Resources is the resource requests and limits for the pods.
 	// +optional
 	Resources corev1.ResourceRequirements `json:"resources,omitempty"`
-	// EnableRoutes exposes Flower via OpenShit route.
-	// +optional
-	EnableRoutes bool `json:"enableRoutes,omitempty"`
+	// enableroutes: true enables routes for the AirflowUI and CeleryUI
+	// +optional, enable on OpenShift clusters only
+	EnableRoutes bool `json:"enableroutes,omitempty"`
 }
 
 func (s *FlowerSpec) validate(fp *field.Path) field.ErrorList {
