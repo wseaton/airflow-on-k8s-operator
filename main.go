@@ -22,6 +22,7 @@ import (
 
 	airflowv1alpha1 "github.com/apache/airflow-on-k8s-operator/api/v1alpha1"
 	"github.com/apache/airflow-on-k8s-operator/controllers"
+	routev1 "github.com/openshift/api/route/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
@@ -40,6 +41,7 @@ func init() {
 
 	_ = airflowv1alpha1.AddToScheme(scheme)
 
+	_ = routev1.AddToScheme(scheme)
 	// +kubebuilder:scaffold:scheme
 }
 

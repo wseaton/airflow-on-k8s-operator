@@ -53,7 +53,7 @@ deploy: manifests
 # Deploy controller in the configured Kubernetes cluster in ~/.kube/config
 undeploy: manifests
 	kustomize build config/default | kubectl delete -f -
-	kubectl delete -f config/crds || true
+	kubectl delete -f config/crd || true
 	kubectl delete -f hack/appcrd.yaml || true
 
 # Generate manifests e.g. CRD, RBAC etc.

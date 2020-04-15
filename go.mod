@@ -8,6 +8,7 @@ require (
 	github.com/kubernetes-sigs/application v0.8.1
 	github.com/onsi/ginkgo v1.11.0
 	github.com/onsi/gomega v1.8.1
+	github.com/openshift/api v0.0.0-20200306192528-e5737622441f
 	k8s.io/api v0.17.2
 	k8s.io/apimachinery v0.17.2
 	k8s.io/client-go v0.17.1

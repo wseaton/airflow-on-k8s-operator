@@ -32,6 +32,7 @@ import (
 	"github.com/apache/airflow-on-k8s-operator/controllers/application"
 	"github.com/apache/airflow-on-k8s-operator/controllers/common"
 	app "github.com/kubernetes-sigs/application/pkg/apis/app/v1beta1"
+	routev1 "github.com/openshift/api/route/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	policyv1 "k8s.io/api/policy/v1beta1"
@@ -74,6 +75,7 @@ type AirflowClusterReconciler struct {
 // +kubebuilder:rbac:groups="",resources=secrets,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups="",resources=serviceaccounts,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=storage.k8s.io,resources=storageclasses,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=route.openshift.io,resources=routes,verbs=get;list;watch;create;update;patch;delete
 
 // +kubebuilder:rbac:groups=airflow.apache.org,resources=airflowclusters;airflowclusters/finalizers,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=airflow.apache.org,resources=airflowclusters/status,verbs=get;update;patch
@@ -91,6 +93,7 @@ func (r *AirflowClusterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 // SetupWithManager - called by main
 func (r *AirflowClusterReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	_ = app.AddToScheme(r.Scheme)
+
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&alpha1.AirflowCluster{}).
 		Complete(acReconciler(mgr))
@@ -478,6 +481,8 @@ func (s *UI) Observables(rsrc interface{}, labels map[string]string, dependent [
 		WithLabels(labels).
 		For(&appsv1.StatefulSetList{}).
 		For(&corev1.SecretList{}).
+		For(&corev1.ServiceList{}).
+		For(&routev1.RouteList{}).
 		Get()
 }
 
@@ -502,9 +507,13 @@ func (s *UI) Objects(rsrc interface{}, rsrclabels map[string]string, observed, d
 		"password": base64.StdEncoding.EncodeToString(common.RandomAlphanumericString(16)),
 	}
 
-	return k8s.NewObjects().
-		WithValue(ngdata).
-		WithTemplate("ui-sts.yaml", &appsv1.StatefulSetList{}, s.sts).
+	bag := k8s.NewObjects()
+	bag.WithValue(ngdata)
+	if r.Spec.UI.EnableRoutes == true {
+		bag.WithTemplate("route.yaml", &routev1.RouteList{})
+	}
+
+	return bag.WithTemplate("ui-sts.yaml", &appsv1.StatefulSetList{}, s.sts).
 		WithTemplate("secret.yaml", &corev1.SecretList{}, reconciler.NoUpdate).
 		WithTemplate("svc.yaml", &corev1.ServiceList{}).
 		Build()
@@ -784,6 +793,8 @@ func (s *Flower) Observables(rsrc interface{}, labels map[string]string, depende
 	return k8s.NewObservables().
 		WithLabels(labels).
 		For(&appsv1.StatefulSetList{}).
+		For(&corev1.ServiceList{}).
+		For(&routev1.RouteList{}).
 		Get()
 }
 
@@ -803,8 +814,13 @@ func (s *Flower) Objects(rsrc interface{}, rsrclabels map[string]string, observe
 	}
 	ngdata := acTemplateValue(r, dependent, common.ValueAirflowComponentFlower, rsrclabels, rsrclabels, map[string]string{"flower": "5555"})
 
-	return k8s.NewObjects().
-		WithValue(ngdata).
+	bag := k8s.NewObjects()
+	bag.WithValue(ngdata)
+	if r.Spec.Flower.EnableRoutes == true {
+		bag.WithTemplate("route.yaml", &routev1.RouteList{})
+	}
+
+	return bag.WithTemplate("svc.yaml", &corev1.ServiceList{}).
 		WithTemplate("flower-sts.yaml", &appsv1.StatefulSetList{}, s.sts).
 		Build()
 }

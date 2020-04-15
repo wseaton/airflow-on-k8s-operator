@@ -14,37 +14,21 @@
 # KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations
 # under the License.
-
-apiVersion: airflow.apache.org/v1alpha1
-kind: AirflowCluster
+apiVersion: route.openshift.io/v1
+kind: Route
 metadata:
-  name: pc-cluster
+  name: {{.Name}}
+  namespace: {{.Namespace}}
+  labels:
+    {{range $k,$v := .Labels }}
+    {{$k}}: {{$v}}
+    {{end}}
 spec:
-  executor: Celery
-  redis:
-    operator: False
-  scheduler:
-    image: "quay.io/opendatahub/docker-airflow"
-    version: "openshift"
-  ui:
-    image: "quay.io/opendatahub/docker-airflow"
-    replicas: 1
-    version: "openshift"
-    enableroutes: true
-  worker:
-    image: "quay.io/opendatahub/docker-airflow"
-    replicas: 2
-    version: "openshift"
-    ForceRoot: "true"
-  flower:
-    image: "quay.io/opendatahub/docker-airflow"
-    replicas: 1
-    version: "openshift"
-    enableroutes: true
-  dags:
-    subdir: "airflow/dags/"
-    git:
-      repo: "https://github.com/VedantMahabaleshwarkar/airflow-dags"
-      once: true
-  airflowbase:
-    name: pc-base
+  to:
+    kind: Service
+    name: {{.SvcName}}
+    weight: 100
+  port:
+    {{range $k,$v := .Ports }}
+    targetPort: {{$k}}
+    {{end}}
