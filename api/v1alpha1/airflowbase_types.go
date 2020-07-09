@@ -28,8 +28,8 @@ import (
 const (
 	DefaultMySQLImage      = "mysql"
 	DefaultMySQLVersion    = "5.7"
-	DefaultPostgresImage   = "postgres"
-	DefaultPostgresVersion = "9.5"
+	DefaultPostgresImage   = "registry.redhat.io/rhel8/postgresql-12"
+	DefaultPostgresVersion = "latest"
 	defaultNFSImage        = "k8s.gcr.io/volume-nfs"
 	defaultNFSVersion      = "0.8"
 	defaultSQLProxyImage   = "gcr.io/cloud-airflow-public/airflow-sqlproxy"
