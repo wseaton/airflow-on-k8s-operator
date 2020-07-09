@@ -58,7 +58,6 @@ spec:
         args:
         - worker
         image: {{.Cluster.Spec.Worker.Image}}:{{.Cluster.Spec.Worker.Version}}
-        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8793
           name: wlog

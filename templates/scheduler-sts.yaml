@@ -58,13 +58,11 @@ spec:
         args:
         - scheduler
         image: {{.Cluster.Spec.Scheduler.Image}}:{{.Cluster.Spec.Scheduler.Version}}
-        imagePullPolicy: IfNotPresent
         volumeMounts:
         - mountPath: /usr/local/airflow/dags/
           name: dags-data
       - name: metrics
         image: pbweb/airflow-prometheus-exporter:latest
-        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9112
           name: metrics

@@ -58,7 +58,6 @@ spec:
         args:
         - flower
         image: {{.Cluster.Spec.Flower.Image}}:{{.Cluster.Spec.Flower.Version}}
-        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5555
           name: flower

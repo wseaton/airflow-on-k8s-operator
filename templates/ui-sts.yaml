@@ -58,7 +58,6 @@ spec:
         args:
         - webserver
         image: {{.Cluster.Spec.UI.Image}}:{{.Cluster.Spec.UI.Version}}
-        imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 5
           httpGet:

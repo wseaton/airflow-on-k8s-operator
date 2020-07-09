@@ -70,7 +70,6 @@ spec:
         - name: SQL_INSTANCE
           value: {{.Base.Spec.SQLProxy.Project}}:{{.Base.Spec.SQLProxy.Region}}:{{.Base.Spec.SQLProxy.Instance}}=tcp:0.0.0.0:{{index .Ports "sqlproxy"}}
         image: {{.Base.Spec.SQLProxy.Image}}:{{.Base.Spec.SQLProxy.Version}}
-        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: {{index .Ports "sqlproxy"}}
           name: sqlproxy

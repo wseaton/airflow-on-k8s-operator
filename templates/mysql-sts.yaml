@@ -79,7 +79,6 @@ spec:
               key: rootpassword
               name: {{.SecretName}}
         image: {{.Base.Spec.MySQL.Image}}:{{.Base.Spec.MySQL.Version}}
-        imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:
             command:

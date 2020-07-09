@@ -57,7 +57,6 @@ spec:
       containers:
       - name: nfs-server
         image: {{.Base.Spec.Storage.Image}}:{{.Base.Spec.Storage.Version}}
-        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 2049
           name: nfs
