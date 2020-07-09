@@ -66,20 +66,22 @@ spec:
         livenessProbe:
           exec:
             command:
-            - bash
-            - -c
-            - psql -w -U $POSTGRES_USER -d $POSTGRES_DB -c SELECT 1
-          failureThreshold: 3
-          initialDelaySeconds: 30
-          periodSeconds: 20
-          successThreshold: 1
-          timeoutSeconds: 5
+              - /usr/libexec/check-container
+              - --live
+          initialDelaySeconds: 120
+          timeoutSeconds: 10
         ports:
         - containerPort: 5432
           name: postgres
+        readinessProbe:
+          exec:
+            command:
+              - /usr/libexec/check-container
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
         volumeMounts:
         - name: data
-          mountPath: /var/lib/postgres/data
+          mountPath: /var/lib/pgsql/data
       restartPolicy: Always
       {{if .Base.Spec.Postgres.VolumeClaimTemplate}}
       {{else}}
