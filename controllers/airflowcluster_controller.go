@@ -481,7 +481,6 @@ func (s *UI) Observables(rsrc interface{}, labels map[string]string, dependent [
 		For(&appsv1.StatefulSetList{}).
 		For(&corev1.SecretList{}).
 		For(&corev1.ServiceList{}).
-		For(&routev1.RouteList{}).
 		Get()
 }
 
@@ -820,7 +819,6 @@ func (s *Flower) Observables(rsrc interface{}, labels map[string]string, depende
 		WithLabels(labels).
 		For(&appsv1.StatefulSetList{}).
 		For(&corev1.ServiceList{}).
-		For(&routev1.RouteList{}).
 		Get()
 }
 
@@ -848,6 +846,7 @@ func (s *Flower) Objects(rsrc interface{}, rsrclabels map[string]string, observe
 
 	return bag.WithTemplate("svc.yaml", &corev1.ServiceList{}).
 		WithTemplate("flower-sts.yaml", &appsv1.StatefulSetList{}, s.sts).
+		WithTemplate("svc.yaml", &corev1.ServiceList{}).
 		Build()
 }
 
