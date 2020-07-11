@@ -58,10 +58,29 @@ spec:
         args:
         - flower
         image: {{.Cluster.Spec.Flower.Image}}:{{.Cluster.Spec.Flower.Version}}
-        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: flower
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 20
+          successThreshold: 1
+          timeoutSeconds: 5
         ports:
         - containerPort: 5555
           name: flower
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: flower
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 2
         volumeMounts:
         - mountPath: /usr/local/airflow/dags/
           name: dags-data
