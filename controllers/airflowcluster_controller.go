@@ -476,6 +476,7 @@ func (s *UI) Observables(rsrc interface{}, labels map[string]string, dependent [
 		WithLabels(labels).
 		For(&appsv1.StatefulSetList{}).
 		For(&corev1.SecretList{}).
+		For(&corev1.ServiceList{}).
 		Get()
 }
 
@@ -504,6 +505,7 @@ func (s *UI) Objects(rsrc interface{}, rsrclabels map[string]string, observed, d
 		WithValue(ngdata).
 		WithTemplate("ui-sts.yaml", &appsv1.StatefulSetList{}, s.sts).
 		WithTemplate("secret.yaml", &corev1.SecretList{}, reconciler.NoUpdate).
+		WithTemplate("svc.yaml", &corev1.ServiceList{}).
 		Build()
 }
 
@@ -781,6 +783,7 @@ func (s *Flower) Observables(rsrc interface{}, labels map[string]string, depende
 	return k8s.NewObservables().
 		WithLabels(labels).
 		For(&appsv1.StatefulSetList{}).
+		For(&corev1.ServiceList{}).
 		Get()
 }
 
@@ -803,6 +806,7 @@ func (s *Flower) Objects(rsrc interface{}, rsrclabels map[string]string, observe
 	return k8s.NewObjects().
 		WithValue(ngdata).
 		WithTemplate("flower-sts.yaml", &appsv1.StatefulSetList{}, s.sts).
+		WithTemplate("svc.yaml", &corev1.ServiceList{}).
 		Build()
 }
 
