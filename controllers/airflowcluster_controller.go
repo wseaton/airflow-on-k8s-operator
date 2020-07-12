@@ -680,6 +680,7 @@ func (s *Scheduler) Observables(rsrc interface{}, labels map[string]string, depe
 		For(&corev1.ConfigMapList{}).
 		For(&corev1.ServiceAccountList{}).
 		For(&rbacv1.RoleBindingList{}).
+		For(&rbacv1.RoleList{}).
 		Get()
 }
 
@@ -730,6 +731,7 @@ func (s *Scheduler) Objects(rsrc interface{}, rsrclabels map[string]string, obse
 	return bag.WithTemplate("scheduler-sts.yaml", &appsv1.StatefulSetList{}, s.sts).
 		WithTemplate("serviceaccount.yaml", &corev1.ServiceAccountList{}, reconciler.NoUpdate).
 		WithTemplate("rolebinding.yaml", &rbacv1.RoleBindingList{}).
+		WithTemplate("scheduler-role.yaml", &rbacv1.RoleList{}).
 		Build()
 }
 
