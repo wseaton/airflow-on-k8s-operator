@@ -25,8 +25,8 @@ metadata:
     {{end}}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: airflow-on-k8s-operator-manager-role
+  kind: Role
+  name: {{.Name}}
 subjects:
 - kind: ServiceAccount
   name: {{.Name}}
