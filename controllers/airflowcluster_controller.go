@@ -481,6 +481,9 @@ func (s *UI) Observables(rsrc interface{}, labels map[string]string, dependent [
 		For(&appsv1.StatefulSetList{}).
 		For(&corev1.SecretList{}).
 		For(&corev1.ServiceList{}).
+		For(&corev1.ServiceAccountList{}).
+		For(&rbacv1.RoleList{}).
+		For(&rbacv1.RoleBindingList{}).
 		Get()
 }
 
@@ -514,11 +517,17 @@ func (s *UI) Objects(rsrc interface{}, rsrclabels map[string]string, observed, d
 	return bag.WithTemplate("ui-sts.yaml", &appsv1.StatefulSetList{}, s.sts).
 		WithTemplate("secret.yaml", &corev1.SecretList{}, reconciler.NoUpdate).
 		WithTemplate("svc.yaml", &corev1.ServiceList{}).
+		WithTemplate("serviceaccount.yaml", &corev1.ServiceAccountList{}, reconciler.NoUpdate).
+		WithTemplate("ui-role.yaml", &rbacv1.RoleList{}).
+		WithTemplate("rolebinding.yaml", &rbacv1.RoleBindingList{}).
 		Build()
 }
 
 func (s *UI) sts(o *reconciler.Object, v interface{}) {
 	sts, r := updateSts(o, v)
+	if r.Cluster.Spec.Executor == alpha1.ExecutorK8s {
+		sts.Spec.Template.Spec.ServiceAccountName = sts.Name
+	}
 	sts.Spec.Template.Spec.Containers[0].Resources = r.Cluster.Spec.UI.Resources
 	if IsPostgres(&r.Base.Spec) {
 		addPostgresUserDBContainer(r.Cluster, sts, r.Base.Spec.Postgres.Image+":"+r.Base.Spec.Postgres.Version)
