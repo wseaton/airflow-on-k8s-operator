@@ -1456,8 +1456,7 @@ spec:
               description: Spec for Airflow UI component.
               properties:
                 enableroutes:
-                  description: 'enableroutes: true enables routes for the AirflowUI
-                    and CeleryUI'
+                  description: EnableRoutes exposes the Airflow UI via OpenShit route.
                   type: boolean
                 image:
                   description: Image defines the AirflowUI Docker image.

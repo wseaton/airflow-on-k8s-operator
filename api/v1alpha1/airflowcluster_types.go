@@ -238,6 +238,9 @@ type AirflowUISpec struct {
 	// Resources is the resource requests and limits for the pods.
 	// +optional
 	Resources corev1.ResourceRequirements `json:"resources,omitempty"`
+	// EnableRoutes exposes the Airflow UI via OpenShit route.
+	// +optional
+	EnableRoutes bool `json:"enableroutes,omitempty"`
 }
 
 func (s *AirflowUISpec) validate(fp *field.Path) field.ErrorList {
