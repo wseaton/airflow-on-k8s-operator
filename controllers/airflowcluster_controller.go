@@ -504,15 +504,16 @@ func (s *UI) Objects(rsrc interface{}, rsrclabels map[string]string, observed, d
 		"password": base64.StdEncoding.EncodeToString(common.RandomAlphanumericString(16)),
 	}
 
-	return k8s.NewObjects().
+	bag := k8s.NewObjects().
 		WithValue(ngdata).
 		WithTemplate("ui-sts.yaml", &appsv1.StatefulSetList{}, s.sts).
 		WithTemplate("secret.yaml", &corev1.SecretList{}, reconciler.NoUpdate).
 		WithTemplate("svc.yaml", &corev1.ServiceList{}).
 		WithTemplate("serviceaccount.yaml", &corev1.ServiceAccountList{}, reconciler.NoUpdate).
 		WithTemplate("ui-role.yaml", &rbacv1.RoleList{}).
-		WithTemplate("rolebinding.yaml", &rbacv1.RoleBindingList{}).
-		Build()
+		WithTemplate("rolebinding.yaml", &rbacv1.RoleBindingList{})
+
+	return bag.Build()
 }
 
 func (s *UI) sts(o *reconciler.Object, v interface{}) {
@@ -814,11 +815,12 @@ func (s *Flower) Objects(rsrc interface{}, rsrclabels map[string]string, observe
 	}
 	ngdata := acTemplateValue(r, dependent, common.ValueAirflowComponentFlower, rsrclabels, rsrclabels, map[string]string{"flower": "5555"})
 
-	return k8s.NewObjects().
+	bag := k8s.NewObjects().
 		WithValue(ngdata).
 		WithTemplate("flower-sts.yaml", &appsv1.StatefulSetList{}, s.sts).
-		WithTemplate("svc.yaml", &corev1.ServiceList{}).
-		Build()
+		WithTemplate("svc.yaml", &corev1.ServiceList{})
+
+	return bag.Build()
 }
 
 func (s *Flower) sts(o *reconciler.Object, v interface{}) {
