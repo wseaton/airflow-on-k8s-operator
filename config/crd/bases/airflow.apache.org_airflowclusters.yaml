@@ -929,6 +929,9 @@ spec:
             flower:
               description: Spec for Flower component.
               properties:
+                enableroutes:
+                  description: EnableRoutes exposes Flower via OpenShit route.
+                  type: boolean
                 image:
                   description: Image defines the Flower Docker image.
                   type: string

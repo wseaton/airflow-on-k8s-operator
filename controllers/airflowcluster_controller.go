@@ -809,6 +809,7 @@ func (s *Flower) Observables(rsrc interface{}, labels map[string]string, depende
 		WithLabels(labels).
 		For(&appsv1.StatefulSetList{}).
 		For(&corev1.ServiceList{}).
+		For(&routev1.RouteList{}).
 		Get()
 }
 
@@ -832,6 +833,10 @@ func (s *Flower) Objects(rsrc interface{}, rsrclabels map[string]string, observe
 		WithValue(ngdata).
 		WithTemplate("flower-sts.yaml", &appsv1.StatefulSetList{}, s.sts).
 		WithTemplate("svc.yaml", &corev1.ServiceList{})
+
+	if r.Spec.Flower.EnableRoutes == true {
+		bag.WithTemplate("route.yaml", &routev1.RouteList{})
+	}
 
 	return bag.Build()
 }
