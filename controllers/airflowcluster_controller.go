@@ -32,7 +32,6 @@ import (
 	"github.com/apache/airflow-on-k8s-operator/controllers/application"
 	"github.com/apache/airflow-on-k8s-operator/controllers/common"
 	app "github.com/kubernetes-sigs/application/pkg/apis/app/v1beta1"
-	routev1 "github.com/openshift/api/route/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	policyv1 "k8s.io/api/policy/v1beta1"
@@ -508,19 +507,16 @@ func (s *UI) Objects(rsrc interface{}, rsrclabels map[string]string, observed, d
 		"password": base64.StdEncoding.EncodeToString(common.RandomAlphanumericString(16)),
 	}
 
-	bag := k8s.NewObjects()
-	bag.WithValue(ngdata)
-	if r.Spec.UI.EnableRoutes == true {
-		bag.WithTemplate("route.yaml", &routev1.RouteList{})
-	}
-
-	return bag.WithTemplate("ui-sts.yaml", &appsv1.StatefulSetList{}, s.sts).
+	bag := k8s.NewObjects().
+		WithValue(ngdata).
+		WithTemplate("ui-sts.yaml", &appsv1.StatefulSetList{}, s.sts).
 		WithTemplate("secret.yaml", &corev1.SecretList{}, reconciler.NoUpdate).
 		WithTemplate("svc.yaml", &corev1.ServiceList{}).
 		WithTemplate("serviceaccount.yaml", &corev1.ServiceAccountList{}, reconciler.NoUpdate).
 		WithTemplate("ui-role.yaml", &rbacv1.RoleList{}).
-		WithTemplate("rolebinding.yaml", &rbacv1.RoleBindingList{}).
-		Build()
+		WithTemplate("rolebinding.yaml", &rbacv1.RoleBindingList{})
+
+	return bag.Build()
 }
 
 func (s *UI) sts(o *reconciler.Object, v interface{}) {
@@ -849,16 +845,12 @@ func (s *Flower) Objects(rsrc interface{}, rsrclabels map[string]string, observe
 	}
 	ngdata := acTemplateValue(r, dependent, common.ValueAirflowComponentFlower, rsrclabels, rsrclabels, map[string]string{"flower": "5555"})
 
-	bag := k8s.NewObjects()
-	bag.WithValue(ngdata)
-	if r.Spec.Flower.EnableRoutes == true {
-		bag.WithTemplate("route.yaml", &routev1.RouteList{})
-	}
-
-	return bag.WithTemplate("svc.yaml", &corev1.ServiceList{}).
+	bag := k8s.NewObjects().
+		WithValue(ngdata).
 		WithTemplate("flower-sts.yaml", &appsv1.StatefulSetList{}, s.sts).
-		WithTemplate("svc.yaml", &corev1.ServiceList{}).
-		Build()
+		WithTemplate("svc.yaml", &corev1.ServiceList{})
+
+	return bag.Build()
 }
 
 func (s *Flower) sts(o *reconciler.Object, v interface{}) {
