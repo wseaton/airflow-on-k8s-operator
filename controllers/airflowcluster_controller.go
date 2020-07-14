@@ -32,6 +32,7 @@ import (
 	"github.com/apache/airflow-on-k8s-operator/controllers/application"
 	"github.com/apache/airflow-on-k8s-operator/controllers/common"
 	app "github.com/kubernetes-sigs/application/pkg/apis/app/v1beta1"
+	routev1 "github.com/openshift/api/route/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	policyv1 "k8s.io/api/policy/v1beta1"
@@ -49,6 +50,7 @@ import (
 const (
 	afk             = "AIRFLOW__KUBERNETES__"
 	afc             = "AIRFLOW__CORE__"
+	afw             = "AIRFLOW__WEBSERVER__"
 	gitSyncDestDir  = "gitdags"
 	gCSSyncDestDir  = "dags"
 	airflowHome     = "/usr/local/airflow"
@@ -74,6 +76,7 @@ type AirflowClusterReconciler struct {
 // +kubebuilder:rbac:groups="",resources=secrets,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups="",resources=serviceaccounts,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=storage.k8s.io,resources=storageclasses,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=route.openshift.io,resources=routes,verbs=get;list;watch;create;update;patch;delete
 
 // +kubebuilder:rbac:groups=airflow.apache.org,resources=airflowclusters,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=airflow.apache.org,resources=airflowclusters/status,verbs=get;update;patch
@@ -399,6 +402,11 @@ func getAirflowEnv(r *alpha1.AirflowCluster, saName string, base *alpha1.Airflow
 			}
 		}
 	}
+	if sp.UI.EnableRoutes == true {
+		env = append(env, []corev1.EnvVar{
+			{Name: afw + "ENABLE_PROXY_FIX", Value: "True"},
+		}...)
+	}
 
 	// Do sorted key scan. To store the keys in slice in sorted order
 	var keys []string
@@ -480,6 +488,7 @@ func (s *UI) Observables(rsrc interface{}, labels map[string]string, dependent [
 		For(&corev1.ServiceAccountList{}).
 		For(&rbacv1.RoleList{}).
 		For(&rbacv1.RoleBindingList{}).
+		For(&routev1.RouteList{}).
 		Get()
 }
 
@@ -512,6 +521,10 @@ func (s *UI) Objects(rsrc interface{}, rsrclabels map[string]string, observed, d
 		WithTemplate("serviceaccount.yaml", &corev1.ServiceAccountList{}, reconciler.NoUpdate).
 		WithTemplate("ui-role.yaml", &rbacv1.RoleList{}).
 		WithTemplate("rolebinding.yaml", &rbacv1.RoleBindingList{})
+
+	if r.Spec.UI.EnableRoutes == true {
+		bag.WithTemplate("route.yaml", &routev1.RouteList{})
+	}
 
 	return bag.Build()
 }
