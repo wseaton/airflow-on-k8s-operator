@@ -947,8 +947,7 @@ spec:
               description: Spec for Flower component.
               properties:
                 enableroutes:
-                  description: 'enableroutes: true enables routes for the AirflowUI
-                    and CeleryUI'
+                  description: EnableRoutes exposes Flower via OpenShit route.
                   type: boolean
                 image:
                   description: Image defines the Flower Docker image.
