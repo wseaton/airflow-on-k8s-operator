@@ -30,7 +30,6 @@ metadata:
 data:
   airflow.cfg: |
     [core]
-    airflow_home = /usr/local/airflow
     dags_folder = /usr/local/airflow/dags
     base_log_folder = /usr/local/airflow/logs
     logging_level = INFO
