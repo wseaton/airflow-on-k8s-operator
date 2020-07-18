@@ -32,9 +32,14 @@ const (
 	defaultRedisImage       = "redis"
 	defaultRedisVersion     = "4.0"
 	defaultRedisPort        = "6379"
-	defaultWorkerImage      = "gcr.io/airflow-operator/airflow"
-	defaultSchedulerImage   = "gcr.io/airflow-operator/airflow"
 	defaultFlowerImage      = "gcr.io/airflow-operator/airflow"
+	defaultFlowerVersion    = "1.10.2"
+	defaultSchedulerImage   = "gcr.io/airflow-operator/airflow"
+	defaultSchedulerVersion = "1.10.2"
+	defaultUIImage          = "gcr.io/airflow-operator/airflow"
+	defaultUIVersion        = "1.10.2"
+	defaultWorkerImage      = "gcr.io/airflow-operator/airflow"
+	defaultWorkerVersion    = "1.10.2"
 	GitsyncImage            = "gcr.io/google_containers/git-sync"
 	GitsyncVersion          = "v3.0.1"
 	GCSsyncImage            = "gcr.io/cloud-airflow-releaser/gcs-syncd"
@@ -45,8 +50,6 @@ const (
 	ExecutorK8s             = "Kubernetes"
 	defaultExecutor         = ExecutorLocal
 	defaultBranch           = "master"
-	defaultWorkerVersion    = "1.10.2"
-	defaultSchedulerVersion = "1.10.2"
 )
 
 var (
@@ -214,6 +217,28 @@ type SchedulerSpec struct {
 
 func (s *SchedulerSpec) validate(fp *field.Path) field.ErrorList {
 	return field.ErrorList{}
+}
+
+// AirflowUISpec defines the attributes to deploy Airflow UI component
+type AirflowUISpec struct {
+	// Image defines the AirflowUI Docker image.
+	// +optional
+	Image string `json:"image,omitempty"`
+	// Version defines the AirflowUI Docker image version.
+	// +optional
+	Version string `json:"version,omitempty"`
+	// Replicas defines the number of running Airflow UI instances in a cluster
+	// +optional
+	Replicas int32 `json:"replicas,omitempty"`
+	// Resources is the resource requests and limits for the pods.
+	// +optional
+	Resources corev1.ResourceRequirements `json:"resources,omitempty"`
+}
+
+func (s *AirflowUISpec) validate(fp *field.Path) field.ErrorList {
+	errs := field.ErrorList{}
+	//errs = append(errs, s.Resources.validate(fp.Child("resources"))...)
+	return errs
 }
 
 // WorkerSpec defines the attributes and desired state of Airflow workers

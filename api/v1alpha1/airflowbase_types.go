@@ -30,11 +30,8 @@ const (
 	DefaultMySQLVersion    = "5.7"
 	DefaultPostgresImage   = "postgres"
 	DefaultPostgresVersion = "9.5"
-	defaultUIImage         = "gcr.io/airflow-operator/airflow"
-	defaultUIVersion       = "1.10.2"
-	defaultFlowerVersion   = "1.10.2"
-	defaultNFSVersion      = "0.8"
 	defaultNFSImage        = "k8s.gcr.io/volume-nfs"
+	defaultNFSVersion      = "0.8"
 	defaultSQLProxyImage   = "gcr.io/cloud-airflow-public/airflow-sqlproxy"
 	defaultSQLProxyVersion = "1.8.0"
 	defaultSchedule        = "0 0 0 ? * * *`" // daily@midnight
@@ -277,28 +274,6 @@ func validStorageProvider(provider string) bool {
 		return true
 	}
 	return false
-}
-
-// AirflowUISpec defines the attributes to deploy Airflow UI component
-type AirflowUISpec struct {
-	// Image defines the AirflowUI Docker image.
-	// +optional
-	Image string `json:"image,omitempty"`
-	// Version defines the AirflowUI Docker image version.
-	// +optional
-	Version string `json:"version,omitempty"`
-	// Replicas defines the number of running Airflow UI instances in a cluster
-	// +optional
-	Replicas int32 `json:"replicas,omitempty"`
-	// Resources is the resource requests and limits for the pods.
-	// +optional
-	Resources corev1.ResourceRequirements `json:"resources,omitempty"`
-}
-
-func (s *AirflowUISpec) validate(fp *field.Path) field.ErrorList {
-	errs := field.ErrorList{}
-	//errs = append(errs, s.Resources.validate(fp.Child("resources"))...)
-	return errs
 }
 
 // NFSStoreSpec defines the attributes to deploy Airflow Storage component
