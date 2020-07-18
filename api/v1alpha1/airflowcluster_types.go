@@ -16,13 +16,14 @@
 package v1alpha1
 
 import (
+	"math/rand"
+	"time"
+
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/validation/field"
-	"math/rand"
 	"sigs.k8s.io/controller-reconciler/pkg/finalizer"
 	"sigs.k8s.io/controller-reconciler/pkg/status"
-	"time"
 )
 
 // defaults and constant strings
