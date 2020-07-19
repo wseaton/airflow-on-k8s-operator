@@ -26,12 +26,8 @@ import (
 
 // defaults and constant strings
 const (
-	DefaultMySQLImage      = "mysql"
-	DefaultMySQLVersion    = "5.7"
-	defaultUIImage         = "gcr.io/airflow-operator/airflow"
-	defaultUIVersion       = "1.10.2"
-	defaultFlowerVersion   = "1.10.2"
-	defaultNFSVersion      = "0.8"
+	DefaultMySQLImage      = "registry.redhat.io/rhel8/mysql-80"
+	DefaultMySQLVersion    = "latest"
 	DefaultPostgresImage   = "registry.redhat.io/rhel8/postgresql-12"
 	DefaultPostgresVersion = "latest"
 	defaultNFSImage        = "k8s.gcr.io/volume-nfs"
