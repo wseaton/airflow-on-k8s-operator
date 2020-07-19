@@ -792,6 +792,7 @@ func (s *Scheduler) Objects(rsrc interface{}, rsrclabels map[string]string, obse
 func (s *Worker) sts(o *reconciler.Object, v interface{}) {
 	sts, r := updateSts(o, v)
 	sts.Spec.Template.Spec.Containers[0].Resources = r.Cluster.Spec.Worker.Resources
+	sts.Spec.Template.Spec.ServiceAccountName = sts.Name
 }
 
 // Observables asd
@@ -800,6 +801,9 @@ func (s *Worker) Observables(rsrc interface{}, labels map[string]string, depende
 		WithLabels(labels).
 		For(&appsv1.StatefulSetList{}).
 		For(&corev1.ServiceList{}).
+		For(&corev1.ServiceAccountList{}).
+		For(&rbacv1.RoleList{}).
+		For(&rbacv1.RoleBindingList{}).
 		Get()
 }
 
@@ -827,6 +831,9 @@ func (s *Worker) Objects(rsrc interface{}, rsrclabels map[string]string, observe
 		WithValue(ngdata).
 		WithTemplate("worker-sts.yaml", &appsv1.StatefulSetList{}, s.sts).
 		WithTemplate("headlesssvc.yaml", &corev1.ServiceList{}).
+		WithTemplate("serviceaccount.yaml", &corev1.ServiceAccountList{}, reconciler.NoUpdate).
+		WithTemplate("worker-role.yaml", &rbacv1.RoleList{}).
+		WithTemplate("rolebinding.yaml", &rbacv1.RoleBindingList{}).
 		Build()
 }
 
