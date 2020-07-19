@@ -26,8 +26,8 @@ import (
 
 // defaults and constant strings
 const (
-	DefaultMySQLImage      = "mysql"
-	DefaultMySQLVersion    = "5.7"
+	DefaultMySQLImage      = "registry.redhat.io/rhel8/mysql-80"
+	DefaultMySQLVersion    = "latest"
 	DefaultPostgresImage   = "registry.redhat.io/rhel8/postgresql-12"
 	DefaultPostgresVersion = "latest"
 	defaultNFSImage        = "k8s.gcr.io/volume-nfs"

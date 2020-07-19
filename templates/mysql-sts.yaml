@@ -61,7 +61,8 @@ spec:
       containers:
       - name: mysql
         args:
-        - --explicit-defaults-for-timestamp=ON
+        - run-mysqld
+        - --default-authentication-plugin=mysql_native_password
         env:
         - name: MYSQL_DATABASE
           value: testdb
