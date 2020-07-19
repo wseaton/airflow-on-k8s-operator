@@ -23,16 +23,16 @@ spec:
   redis:
     operator: false
   scheduler:
-    version: "1.10.2"
+    version: "openshift"
   ui:
     replicas: 1
-    version: "1.10.2"
+    version: "openshift"
   worker:
     replicas: 2
-    version: "1.10.2"
+    version: "openshift"
   flower:
     replicas: 1
-    version: "1.10.2"
+    version: "openshift"
   dags:
     subdir: "airflow/example_dags/"
     git:

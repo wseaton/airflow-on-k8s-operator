@@ -22,8 +22,8 @@ spec:
   executor: Local
   ui:
     replicas: 1
-    version: "1.10.2"
+    version: "openshift"
   scheduler:
-    version: "1.10.2"
+    version: "openshift"
   airflowbase:
     name: pc-base

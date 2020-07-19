@@ -22,13 +22,13 @@ spec:
   executor: Kubernetes
   ui:
     replicas: 1
-    version: "1.10.2"
+    version: "openshift"
   scheduler:
-    version: "1.10.2"
+    version: "openshift"
   worker:
     # image: "gcr.io/airflow-development-225219/airflow"
     # version: "demo-nr4"
-    version: "1.10.2"
+    version: "openshift"
   dags:
     subdir: "airflow/example_dags/"
     git:
