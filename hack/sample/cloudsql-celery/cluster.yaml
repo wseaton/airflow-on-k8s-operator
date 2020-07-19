@@ -36,6 +36,7 @@ spec:
     subdir: "airflow/example_dags/"
     git:
       repo: "https://github.com/apache/airflow/"
+      branch: v1-10-stable
       once: true
   airflowbase:
     name: cc-base

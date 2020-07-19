@@ -37,8 +37,10 @@ spec:
     version: "openshift"
   dags:
     subdir: "airflow/example_dags/"
+    branch: v1-10-stable
     git:
       repo: "https://github.com/apache/airflow/"
+      branch: v1-10-stable
       once: true
   airflowbase:
     name: mc-base
