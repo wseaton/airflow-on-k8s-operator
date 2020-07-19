@@ -24,23 +24,19 @@ spec:
   redis:
     operator: False
   scheduler:
-    image: "quay.io/opendatahub/docker-airflow"
     version: "openshift"
   ui:
     image: "quay.io/opendatahub/docker-airflow"
     replicas: 1
     version: "openshift"
-    enableroutes: true
   worker:
     image: "quay.io/opendatahub/docker-airflow"
     replicas: 2
     version: "openshift"
-    ForceRoot: "true"
   flower:
     image: "quay.io/opendatahub/docker-airflow"
     replicas: 1
     version: "openshift"
-    enableroutes: true
   dags:
     subdir: "airflow/dags/"
     git:

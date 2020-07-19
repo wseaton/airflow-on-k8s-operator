@@ -22,10 +22,10 @@ metadata:
 spec:
   executor: Local
   scheduler:
-    version: "1.10.2"
+    version: "openshift"
   ui:
     replicas: 1
-    version: "1.10.2"
+    version: "openshift"
   airflowbase:
     name: mc-base
     #  config:

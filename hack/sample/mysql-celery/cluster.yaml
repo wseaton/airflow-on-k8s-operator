@@ -24,20 +24,19 @@ spec:
   redis:
     operator: False
   scheduler:
-    image: "docker.io/vedantm/docker-airflow"
-    version: "latest"
+    version: "openshift"
   ui:
     image: "docker.io/vedantm/docker-airflow"
     replicas: 1
-    version: "latest"
+    version: "openshift"
   worker:
     image: "docker.io/vedantm/docker-airflow"
     replicas: 2
-    version: "latest"
+    version: "openshift"
   flower:
     image: "docker.io/vedantm/docker-airflow"
     replicas: 1
-    version: "latest"
+    version: "openshift"
   dags:
     subdir: "airflow/dags/"
     git:
