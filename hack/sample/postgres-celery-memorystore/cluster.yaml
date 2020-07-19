@@ -41,7 +41,8 @@ spec:
   dags:
     subdir: "airflow/example_dags/"
     git:
-      repo: "https://github.com/apache/incubator-airflow/"
+      repo: "https://github.com/apache/airflow/"
+      branch: v1-10-stable
       once: true
   airflowbase:
     name: pc-base
