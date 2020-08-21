@@ -25,6 +25,7 @@ import (
 
 	"github.com/go-logr/logr"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/util/json"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
@@ -32,6 +33,7 @@ import (
 	"github.com/apache/airflow-on-k8s-operator/controllers/application"
 	"github.com/apache/airflow-on-k8s-operator/controllers/common"
 	app "github.com/kubernetes-sigs/application/pkg/apis/app/v1beta1"
+	oauthv1 "github.com/openshift/api/oauth/v1"
 	routev1 "github.com/openshift/api/route/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -520,7 +522,7 @@ func (s *UI) Objects(rsrc interface{}, rsrclabels map[string]string, observed, d
 		WithTemplate("ui-sts.yaml", &appsv1.StatefulSetList{}, s.sts).
 		WithTemplate("secret.yaml", &corev1.SecretList{}, reconciler.NoUpdate).
 		WithTemplate("svc.yaml", &corev1.ServiceList{}).
-		WithTemplate("serviceaccount.yaml", &corev1.ServiceAccountList{}, reconciler.NoUpdate).
+		WithTemplate("serviceaccount.yaml", &corev1.ServiceAccountList{}, s.sa).
 		WithTemplate("ui-role.yaml", &rbacv1.RoleList{}).
 		WithTemplate("rolebinding.yaml", &rbacv1.RoleBindingList{})
 
@@ -542,6 +544,26 @@ func (s *UI) sts(o *reconciler.Object, v interface{}) {
 	} else {
 		addMySQLUserDBContainer(r.Cluster, sts)
 	}
+}
+
+func (s *UI) sa(o *reconciler.Object, v interface{}) {
+	r := v.(*common.TemplateValue)
+	oarr := oauthv1.OAuthRedirectReference{
+		Reference: oauthv1.RedirectReference{
+			Kind: "Route",
+			Name: r.Name,
+		},
+	}
+	oarrJSON, err := json.Marshal(oarr)
+	if err != nil {
+		return
+	}
+
+	sa := o.Obj.(*k8s.Object).Obj.(*corev1.ServiceAccount)
+	if sa.ObjectMeta.Annotations == nil {
+		sa.ObjectMeta.Annotations = make(map[string]string)
+	}
+	sa.ObjectMeta.Annotations["serviceaccounts.openshift.io/oauth-redirectreference.first"] = string(oarrJSON)
 }
 
 // ------------------------------ RedisSpec ---------------------------------------
