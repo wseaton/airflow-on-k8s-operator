@@ -404,10 +404,27 @@ func getAirflowEnv(r *alpha1.AirflowCluster, saName string, base *alpha1.Airflow
 			}
 		}
 	}
-	if sp.UI.EnableRoutes == true {
-		env = append(env, []corev1.EnvVar{
-			{Name: afw + "ENABLE_PROXY_FIX", Value: "True"},
-		}...)
+	if sp.UI != nil {
+		if sp.UI.EnableRoutes == true {
+			env = append(env, []corev1.EnvVar{
+				{Name: afw + "ENABLE_PROXY_FIX", Value: "True"},
+			}...)
+		}
+		if sp.UI.Authentication != nil {
+			if sp.UI.Authentication.Type != "none" {
+				env = append(env, []corev1.EnvVar{
+					{Name: afw + "RBAC", Value: "True"},
+				}...)
+				env = append(env, []corev1.EnvVar{
+					{Name: "AUTH_TYPE", Value: sp.UI.Authentication.Type},
+				}...)
+				if sp.UI.Authentication.UserRegistrationRole != "" {
+					env = append(env, []corev1.EnvVar{
+						{Name: "AUTH_USER_REGISTRATION_ROLE", Value: sp.UI.Authentication.UserRegistrationRole},
+					}...)
+				}
+			}
+		}
 	}
 
 	// Do sorted key scan. To store the keys in slice in sorted order
