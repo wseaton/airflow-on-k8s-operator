@@ -1437,6 +1437,24 @@ spec:
             ui:
               description: Spec for Airflow UI component.
               properties:
+                authentication:
+                  description: Authentication defines the user authentication for
+                    Airflow UI.
+                  properties:
+                    type:
+                      description: 'Choose the authentication type. Available types
+                        are: none, database, openshift (none = no login required,
+                        database = users stored in the database can log in, openshift
+                        = users with valid OpenShift credentials can log in).'
+                      type: string
+                    user_registration_role:
+                      description: 'Select the Airflow role that is assigned to the
+                        user when first registered in the database. This setting directly
+                        translates to the AUTH_USER_REGISTRATION_ROLE setting in webserver_config.py.
+                        Airflow ships with a set of roles by default: Admin, User,
+                        Op, Viewer, Public.'
+                      type: string
+                  type: object
                 enableroutes:
                   description: EnableRoutes exposes the Airflow UI via OpenShit route.
                   type: boolean
