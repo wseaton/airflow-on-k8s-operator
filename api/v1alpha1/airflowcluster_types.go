@@ -241,11 +241,30 @@ type AirflowUISpec struct {
 	// EnableRoutes exposes the Airflow UI via OpenShit route.
 	// +optional
 	EnableRoutes bool `json:"enableroutes,omitempty"`
+	// Authentication defines the user authentication for Airflow UI.
+	// +optional
+	Authentication *AirflowUIAuthentication `json:"authentication,omitempty"`
 }
 
 func (s *AirflowUISpec) validate(fp *field.Path) field.ErrorList {
 	errs := field.ErrorList{}
 	//errs = append(errs, s.Resources.validate(fp.Child("resources"))...)
+	if s == nil {
+		return errs
+	}
+	ui := field.NewPath("spec", "ui")
+	if s.Authentication != nil {
+		var allowedAuthTypes = []string{"none", "database", "openshift"}
+		allowed := false
+		for _, authType := range allowedAuthTypes {
+			if authType == s.Authentication.Type {
+				allowed = true
+			}
+		}
+		if !allowed {
+			errs = append(errs, field.NotSupported(ui.Child("authentication", "type"), s.Authentication.Type, allowedAuthTypes))
+		}
+	}
 	return errs
 }
 
@@ -458,6 +477,19 @@ type MemoryStoreStatus struct {
 	State                string `json:"state,omitempty"`
 	status.Meta          `json:",inline"`
 	status.ComponentMeta `json:",inline"`
+}
+
+// AirflowUIAuthentication defines the user authentication for Airflow UI
+type AirflowUIAuthentication struct {
+	// Choose the authentication type. Available types are: none, database, openshift
+	// (none = no login required, database = users stored in the database can log in,
+	// openshift = users with valid OpenShift credentials can log in).
+	Type string `json:"type,omitempty"`
+	// Select the Airflow role that is assigned to the user when first registered in the
+	// database. This setting directly translates to the AUTH_USER_REGISTRATION_ROLE setting
+	// in webserver_config.py. Airflow ships with a set of roles by default: Admin, User, Op,
+	// Viewer, Public.
+	UserRegistrationRole string `json:"user_registration_role,omitempty"`
 }
 
 // AirflowClusterStatus defines the observed state of AirflowCluster
