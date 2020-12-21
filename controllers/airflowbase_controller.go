@@ -55,6 +55,7 @@ type AirflowBaseReconciler struct {
 }
 
 // +kubebuilder:rbac:groups=airflow.apache.org,resources=airflowbases,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=airflow.apache.org,resources=airflowbases/finalizers,verbs=get;update;patch
 // +kubebuilder:rbac:groups=airflow.apache.org,resources=airflowbases/status,verbs=get;update;patch
 
 // Reconcile - Dummy TODO remove this
