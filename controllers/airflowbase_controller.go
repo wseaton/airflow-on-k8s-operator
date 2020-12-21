@@ -33,6 +33,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"encoding/base64"
+	"time"
+
 	alpha1 "github.com/apache/airflow-on-k8s-operator/api/v1alpha1"
 	"github.com/apache/airflow-on-k8s-operator/controllers/application"
 	"github.com/apache/airflow-on-k8s-operator/controllers/common"
@@ -44,7 +46,6 @@ import (
 	"sigs.k8s.io/controller-reconciler/pkg/reconciler"
 	"sigs.k8s.io/controller-reconciler/pkg/reconciler/manager/k8s"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
-	"time"
 )
 
 // AirflowBaseReconciler reconciles a AirflowBase object
@@ -54,7 +55,8 @@ type AirflowBaseReconciler struct {
 	Scheme *runtime.Scheme
 }
 
-// +kubebuilder:rbac:groups=airflow.apache.org,resources=airflowbases;airflowbases/finalizers,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=airflow.apache.org,resources=airflowbases,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=airflow.apache.org,resources=airflowbases/finalizers,verbs=get;update;patch
 // +kubebuilder:rbac:groups=airflow.apache.org,resources=airflowbases/status,verbs=get;update;patch
 
 // Reconcile - Dummy TODO remove this
