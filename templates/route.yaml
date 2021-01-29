@@ -32,3 +32,6 @@ spec:
     {{range $k,$v := .Ports }}
     targetPort: {{$k}}
     {{end}}
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
