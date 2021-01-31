@@ -691,6 +691,10 @@ spec:
                     user:
                       description: User for git access
                       type: string
+                    verify:
+                      description: Configure git to ignore ssl (for use with self-signed
+                        certs)
+                      type: boolean
                   required:
                   - repo
                   type: object
@@ -930,6 +934,8 @@ spec:
               description: Spec for Flower component.
               properties:
                 enableroutes:
+                  description: 'enableroutes: true enables routes for the AirflowUI
+                    and CeleryUI'
                   type: boolean
                 image:
                   description: Image defines the Flower Docker image.
@@ -1437,6 +1443,8 @@ spec:
               description: Spec for Airflow UI component.
               properties:
                 enableroutes:
+                  description: 'enableroutes: true enables routes for the AirflowUI
+                    and CeleryUI'
                   type: boolean
                 image:
                   description: Image defines the AirflowUI Docker image.
