@@ -691,6 +691,9 @@ spec:
                     user:
                       description: User for git access
                       type: string
+                    submodules:
+                      description: Git submodule sync mode ie. 'recursive,shallow,off'
+                      type: string
                     verify:
                       description: Configure git to ignore ssl (for use with self-signed
                         certs)

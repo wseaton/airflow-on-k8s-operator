@@ -275,6 +275,8 @@ type GitSpec struct {
 	User string `json:"user,omitempty"`
 	// Once syncs initially and quits (use init container instead of sidecar)
 	Once bool `json:"once,omitempty"`
+	// Control how git submodules are synced (default recursive)
+	SubmoduleMode string `json:"submodules,omitempty"`
 	// Configure git to ignore ssl (for use with self-signed certs)
 	VerifySsl bool `json:"verify,omitempty"`
 	// Reference to git credentials (user, password, ssh etc)
