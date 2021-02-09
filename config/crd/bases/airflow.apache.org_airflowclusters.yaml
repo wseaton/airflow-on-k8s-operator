@@ -688,15 +688,16 @@ spec:
                     rev:
                       description: Rev is the git hash to be used for syncing
                       type: string
+                    submodules:
+                      description: Control how git submodules are synced (default
+                        recursive)
+                      type: string
                     user:
                       description: User for git access
                       type: string
-                    submodules:
-                      description: Git submodule sync mode ie. 'recursive,shallow,off'
-                      type: string
                     verify:
                       description: Configure git to ignore ssl (for use with self-signed
-                        certs)
+                        certs), false to ignore
                       type: boolean
                   required:
                   - repo

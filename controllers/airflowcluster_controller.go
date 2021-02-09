@@ -623,10 +623,12 @@ func gitContainer(s *alpha1.GitSpec, volName string) (bool, corev1.Container) {
 			{Name: "GIT_SYNC_USERNAME", Value: s.User},
 		}...)
 	}
-	if s.VerifySsl {
-		env = append(env, []corev1.EnvVar{
-			{Name: "GIT_SSL_NO_VERIFY", Value: strconv.FormatBool(s.VerifySsl)},
-		}...)
+	if s.VerifySsl != nil {
+		if *s.VerifySsl == false {
+			env = append(env, []corev1.EnvVar{
+				{Name: "GIT_SSL_NO_VERIFY", Value: "true"},
+			}...)
+		}
 	}
 	if s.SubmoduleMode != "" {
 		env = append(env, []corev1.EnvVar{

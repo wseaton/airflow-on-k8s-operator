@@ -278,7 +278,7 @@ type GitSpec struct {
 	// Control how git submodules are synced (default recursive)
 	SubmoduleMode string `json:"submodules,omitempty"`
 	// Configure git to ignore ssl (for use with self-signed certs)
-	VerifySsl bool `json:"verify,omitempty"`
+	VerifySsl *bool `json:"verify,omitempty"`
 	// Reference to git credentials (user, password, ssh etc)
 	CredSecretRef *corev1.LocalObjectReference `json:"cred,omitempty"`
 }
