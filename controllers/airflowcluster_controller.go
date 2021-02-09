@@ -615,14 +615,22 @@ func gitContainer(s *alpha1.GitSpec, volName string) (bool, corev1.Container) {
 		{Name: "GIT_SYNC_BRANCH", Value: s.Branch},
 		{Name: "GIT_SYNC_ONE_TIME", Value: strconv.FormatBool(s.Once)},
 		{Name: "GIT_SYNC_REV", Value: s.Rev},
-		{Name: "GIT_SYNC_SUBMODULES", Value: s.SubmoduleMode},
-		{Name: "GIT_SSL_NO_VERIFY", Value: strconv.FormatBool(s.VerifySsl)},
 	}
 	if s.CredSecretRef != nil {
 		env = append(env, []corev1.EnvVar{
 			{Name: "GIT_SYNC_PASSWORD",
 				ValueFrom: envFromSecret(s.CredSecretRef.Name, "password")},
 			{Name: "GIT_SYNC_USERNAME", Value: s.User},
+		}...)
+	}
+	if s.VerifySsl != nil {
+		env = append(env, []corev1.EnvVar{
+			{Name: "GIT_SSL_NO_VERIFY", Value: strconv.FormatBool(s.VerifySsl)},
+		}...)
+	}
+	if s.SubmoduleMode != nil {
+		env = append(env, []corev1.EnvVar{
+			{Name: "GIT_SYNC_SUBMODULES", Value: s.SubmoduleMode},
 		}...)
 	}
 	if s.Once {
