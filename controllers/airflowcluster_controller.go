@@ -630,11 +630,6 @@ func gitContainer(s *alpha1.GitSpec, volName string) (bool, corev1.Container) {
 			}...)
 		}
 	}
-	if s.SubmoduleMode != "" {
-		env = append(env, []corev1.EnvVar{
-			{Name: "GIT_SYNC_SUBMODULES", Value: s.SubmoduleMode},
-		}...)
-	}
 	if s.Once {
 		init = true
 	}
