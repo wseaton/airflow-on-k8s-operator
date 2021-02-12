@@ -684,7 +684,6 @@ func gitContainer(s *alpha1.GitSpec, volName string) (bool, corev1.Container) {
 			}...)
 		}
 	}
-
 	if s.Once {
 		init = true
 	}
