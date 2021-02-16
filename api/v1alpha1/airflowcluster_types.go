@@ -16,13 +16,14 @@
 package v1alpha1
 
 import (
+	"math/rand"
+	"time"
+
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/validation/field"
-	"math/rand"
 	"sigs.k8s.io/controller-reconciler/pkg/finalizer"
 	"sigs.k8s.io/controller-reconciler/pkg/status"
-	"time"
 )
 
 // defaults and constant strings
@@ -35,8 +36,8 @@ const (
 	defaultWorkerImage      = "gcr.io/airflow-operator/airflow"
 	defaultSchedulerImage   = "gcr.io/airflow-operator/airflow"
 	defaultFlowerImage      = "gcr.io/airflow-operator/airflow"
-	GitsyncImage            = "gcr.io/google_containers/git-sync"
-	GitsyncVersion          = "v3.0.1"
+	GitsyncImage            = "k8s.gcr.io/git-sync/git-sync"
+	GitsyncVersion          = "v3.2.2"
 	GCSsyncImage            = "gcr.io/cloud-airflow-releaser/gcs-syncd"
 	GCSsyncVersion          = "cloud_composer_service_2018-05-23-RC0"
 	ExecutorLocal           = "Local"
@@ -276,6 +277,9 @@ type GitSpec struct {
 	Once bool `json:"once,omitempty"`
 	// Reference to git credentials (user, password, ssh etc)
 	CredSecretRef *corev1.LocalObjectReference `json:"cred,omitempty"`
+	// git-sync image + tag to use
+	SyncImage   string `json:"sync-image,omitempty"`
+	SyncVersion string `json:"sync-tag,omitempty"`
 }
 
 func (s *GitSpec) validate(fp *field.Path) field.ErrorList {

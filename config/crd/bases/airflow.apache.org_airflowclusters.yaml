@@ -691,6 +691,12 @@ spec:
                     user:
                       description: User for git access
                       type: string
+                    sync-image:
+                      description: Image to use for git-sync
+                      type: string
+                    sync-tag:
+                      description: Tag to use for git-sync image
+                      type: string
                   required:
                   - repo
                   type: object

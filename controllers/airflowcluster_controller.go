@@ -626,9 +626,17 @@ func gitContainer(s *alpha1.GitSpec, volName string) (bool, corev1.Container) {
 	if s.Once {
 		init = true
 	}
+
+	// default to constant supplied by operator
+	image := alpha1.GitsyncImage + ":" + alpha1.GitsyncVersion
+
+	if s.SyncImage != "" && s.SyncVersion != "" {
+		image = s.SyncImage + ":" + s.SyncVersion
+	}
+
 	container = corev1.Container{
 		Name:    "git-sync",
-		Image:   alpha1.GitsyncImage + ":" + alpha1.GitsyncVersion,
+		Image:   image,
 		Env:     env,
 		Command: []string{"/git-sync"},
 		Ports: []corev1.ContainerPort{
