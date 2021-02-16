@@ -704,8 +704,7 @@ spec:
                     sync-env:
                       additionalProperties:
                         type: string
-                      description: Airflow defines a list of kv pairs that describe env
-                        variables injected into the nodes
+                      description: kv pairs of env vars to set in the git-sync container 
                       type: object
                   required:
                   - repo
