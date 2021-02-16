@@ -701,6 +701,12 @@ spec:
                     sync-tag:
                       description: Tag to use for git-sync image
                       type: string
+                    sync-env:
+                      additionalProperties:
+                        type: string
+                      description: Airflow defines a list of kv pairs that describe env
+                        variables injected into the nodes
+                      type: object
                   required:
                   - repo
                   type: object

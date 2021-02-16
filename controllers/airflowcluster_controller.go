@@ -630,6 +630,16 @@ func gitContainer(s *alpha1.GitSpec, volName string) (bool, corev1.Container) {
 			}...)
 		}
 	}
+	// do final env configuration via git-sync env overide option
+	var keys []string
+	for k := range s.SyncEnv {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	for _, k := range keys {
+		env = append(env, corev1.EnvVar{Name: k, Value: s.SyncEnv[k]})
+	}
+
 	if s.Once {
 		init = true
 	}
