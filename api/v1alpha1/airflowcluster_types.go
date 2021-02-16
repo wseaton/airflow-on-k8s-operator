@@ -275,6 +275,8 @@ type GitSpec struct {
 	User string `json:"user,omitempty"`
 	// Once syncs initially and quits (use init container instead of sidecar)
 	Once bool `json:"once,omitempty"`
+	// Configure git to ignore ssl (for use with self-signed certs)
+	VerifySsl *bool `json:"verify,omitempty"`
 	// Reference to git credentials (user, password, ssh etc)
 	CredSecretRef *corev1.LocalObjectReference `json:"cred,omitempty"`
 	// git-sync image + tag to use
