@@ -613,6 +613,7 @@ func gitContainer(s *alpha1.GitSpec, volName string) (bool, corev1.Container) {
 		{Name: "GIT_SYNC_REPO", Value: s.Repo},
 		{Name: "GIT_SYNC_DEST", Value: gitSyncDestDir},
 		{Name: "GIT_SYNC_BRANCH", Value: s.Branch},
+		{Name: "GIT_SYNC_ROOT", Value: "/tmp/git"},
 		{Name: "GIT_SYNC_ONE_TIME", Value: strconv.FormatBool(s.Once)},
 		{Name: "GIT_SYNC_REV", Value: s.Rev},
 	}
