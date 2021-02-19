@@ -617,6 +617,7 @@ func gitContainer(s *alpha1.GitSpec, volName string) (bool, corev1.Container) {
 		{Name: "GIT_SYNC_ROOT", Value: "/tmp/git"},
 		{Name: "GIT_SYNC_ONE_TIME", Value: strconv.FormatBool(s.Once)},
 		{Name: "GIT_SYNC_REV", Value: s.Rev},
+		{Name: "HOME", Value: "/tmp"},
 	}
 	if s.CredSecretRef != nil {
 		env = append(env, []corev1.EnvVar{
