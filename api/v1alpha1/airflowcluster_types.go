@@ -280,9 +280,9 @@ type GitSpec struct {
 	// Reference to git credentials (user, password, ssh etc)
 	CredSecretRef *corev1.LocalObjectReference `json:"cred,omitempty"`
 	// git-sync image config + tag to use
-	SyncImage   string            `json:"sync-image,omitempty"`
-	SyncVersion string            `json:"sync-tag,omitempty"`
-	SyncEnv     map[string]string `json:"sync-env,omitempty"`
+	SyncImage   string            `json:"syncImage,omitempty"`
+	SyncVersion string            `json:"syncTag,omitempty"`
+	SyncEnv     map[string]string `json:"syncEnv,omitempty"`
 }
 
 func (s *GitSpec) validate(fp *field.Path) field.ErrorList {
