@@ -263,6 +263,13 @@ func (s *GCSSpec) validate(fp *field.Path) field.ErrorList {
 	return errs
 }
 
+//SyncSpec defines attributes related to the git-sync container itself
+type SyncSpec struct {
+	Image   string            `json:"image,omitempty"`
+	Version string            `json:"tag,omitempty"`
+	Env     map[string]string `json:"env,omitempty"`
+}
+
 //GitSpec defines the atributed needed to sync from a git repo
 type GitSpec struct {
 	// Repo describes the http/ssh uri for git repo
@@ -279,10 +286,8 @@ type GitSpec struct {
 	VerifySsl *bool `json:"verify,omitempty"`
 	// Reference to git credentials (user, password, ssh etc)
 	CredSecretRef *corev1.LocalObjectReference `json:"cred,omitempty"`
-	// git-sync image config + tag to use
-	SyncImage   string            `json:"syncImage,omitempty"`
-	SyncVersion string            `json:"syncTag,omitempty"`
-	SyncEnv     map[string]string `json:"syncEnv,omitempty"`
+	// Reference to git-sync image specific configuration
+	Sync *SyncSpec `json:"sync,omitempty"`
 }
 
 func (s *GitSpec) validate(fp *field.Path) field.ErrorList {

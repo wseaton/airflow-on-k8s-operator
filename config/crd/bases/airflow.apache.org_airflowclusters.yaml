@@ -695,16 +695,18 @@ spec:
                       description: Configure git to ignore ssl (for use with self-signed
                         certs), false to ignore
                       type: boolean
-                    syncImage:
-                      description: Image to use for git-sync
-                      type: string
-                    syncTag:
-                      description: Tag to use for git-sync image
-                      type: string
-                    syncEnv:
-                      additionalProperties:
-                        type: string
-                      description: kv pairs of env vars to set in the git-sync container 
+                    sync:
+                      description: git-sync container related config
+                      properties:
+                        image:
+                          type: string
+                        tag:
+                          type: string
+                        env:
+                          additionalProperties:
+                            type: string
+                          description: kv pairs of env vars to set in the git-sync container 
+                          type: object
                       type: object
                   required:
                   - repo

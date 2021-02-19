@@ -608,6 +608,7 @@ func gcsContainer(s *alpha1.GCSSpec, volName string) (bool, corev1.Container) {
 
 func gitContainer(s *alpha1.GitSpec, volName string) (bool, corev1.Container) {
 	init := false
+	image := alpha1.GitsyncImage + ":" + alpha1.GitsyncVersion
 	container := corev1.Container{}
 	env := []corev1.EnvVar{
 		{Name: "GIT_SYNC_REPO", Value: s.Repo},
@@ -631,25 +632,24 @@ func gitContainer(s *alpha1.GitSpec, volName string) (bool, corev1.Container) {
 			}...)
 		}
 	}
-	// do final env configuration via git-sync env overide option
-	var keys []string
-	for k := range s.SyncEnv {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-	for _, k := range keys {
-		env = append(env, corev1.EnvVar{Name: k, Value: s.SyncEnv[k]})
-	}
 
 	if s.Once {
 		init = true
 	}
 
-	// default to constant supplied by operator
-	image := alpha1.GitsyncImage + ":" + alpha1.GitsyncVersion
-
-	if s.SyncImage != "" && s.SyncVersion != "" {
-		image = s.SyncImage + ":" + s.SyncVersion
+	if s.Sync != nil {
+		if s.Sync.Image != "" && s.Sync.Version != "" {
+			image = s.Sync.Image + ":" + s.Sync.Version
+		}
+		// do final env configuration via git-sync env overide option
+		var keys []string
+		for k := range s.Sync.Env {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+		for _, k := range keys {
+			env = append(env, corev1.EnvVar{Name: k, Value: s.Sync.Env[k]})
+		}
 	}
 
 	container = corev1.Container{
