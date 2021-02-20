@@ -193,7 +193,7 @@ type FlowerSpec struct {
 	Resources corev1.ResourceRequirements `json:"resources,omitempty"`
 	// EnableRoutes exposes Flower via OpenShit route.
 	// +optional
-	EnableRoutes bool `json:"enableroutes,omitempty"`
+	EnableRoutes bool `json:"enableRoutes,omitempty"`
 }
 
 func (s *FlowerSpec) validate(fp *field.Path) field.ErrorList {
@@ -239,7 +239,7 @@ type AirflowUISpec struct {
 	Resources corev1.ResourceRequirements `json:"resources,omitempty"`
 	// EnableRoutes exposes the Airflow UI via OpenShit route.
 	// +optional
-	EnableRoutes bool `json:"enableroutes,omitempty"`
+	EnableRoutes bool `json:"enableRoutes,omitempty"`
 	// Authentication defines the user authentication for Airflow UI.
 	// +optional
 	Authentication *AirflowUIAuthentication `json:"authentication,omitempty"`
@@ -475,7 +475,7 @@ type AirflowUIAuthentication struct {
 	// database. This setting directly translates to the AUTH_USER_REGISTRATION_ROLE setting
 	// in webserver_config.py. Airflow ships with a set of roles by default: Admin, User, Op,
 	// Viewer, Public.
-	UserRegistrationRole string `json:"user_registration_role,omitempty"`
+	UserRegistrationRole string `json:"userRegistrationRole,omitempty"`
 }
 
 // AirflowClusterStatus defines the observed state of AirflowCluster
