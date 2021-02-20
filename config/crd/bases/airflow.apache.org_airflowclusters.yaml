@@ -946,7 +946,7 @@ spec:
             flower:
               description: Spec for Flower component.
               properties:
-                enableroutes:
+                enableRoutes:
                   description: EnableRoutes exposes Flower via OpenShit route.
                   type: boolean
                 image:
@@ -1464,7 +1464,7 @@ spec:
                         database = users stored in the database can log in, openshift
                         = users with valid OpenShift credentials can log in).'
                       type: string
-                    user_registration_role:
+                    userRegistrationRole:
                       description: 'Select the Airflow role that is assigned to the
                         user when first registered in the database. This setting directly
                         translates to the AUTH_USER_REGISTRATION_ROLE setting in webserver_config.py.
@@ -1472,7 +1472,7 @@ spec:
                         Op, Viewer, Public.'
                       type: string
                   type: object
-                enableroutes:
+                enableRoutes:
                   description: EnableRoutes exposes the Airflow UI via OpenShit route.
                   type: boolean
                 image:
