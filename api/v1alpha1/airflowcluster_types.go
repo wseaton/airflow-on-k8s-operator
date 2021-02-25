@@ -36,8 +36,8 @@ const (
 	defaultWorkerImage      = "gcr.io/airflow-operator/airflow"
 	defaultSchedulerImage   = "gcr.io/airflow-operator/airflow"
 	defaultFlowerImage      = "gcr.io/airflow-operator/airflow"
-	GitsyncImage            = "gcr.io/google_containers/git-sync"
-	GitsyncVersion          = "v3.0.1"
+	GitsyncImage            = "k8s.gcr.io/git-sync/git-sync"
+	GitsyncVersion          = "v3.2.2"
 	GCSsyncImage            = "gcr.io/cloud-airflow-releaser/gcs-syncd"
 	GCSsyncVersion          = "cloud_composer_service_2018-05-23-RC0"
 	ExecutorLocal           = "Local"
@@ -263,6 +263,13 @@ func (s *GCSSpec) validate(fp *field.Path) field.ErrorList {
 	return errs
 }
 
+//SyncSpec defines attributes related to the git-sync container itself
+type SyncSpec struct {
+	Image   string            `json:"image,omitempty"`
+	Version string            `json:"tag,omitempty"`
+	Env     map[string]string `json:"env,omitempty"`
+}
+
 //GitSpec defines the atributed needed to sync from a git repo
 type GitSpec struct {
 	// Repo describes the http/ssh uri for git repo
@@ -279,6 +286,8 @@ type GitSpec struct {
 	VerifySsl *bool `json:"verify,omitempty"`
 	// Reference to git credentials (user, password, ssh etc)
 	CredSecretRef *corev1.LocalObjectReference `json:"cred,omitempty"`
+	// Reference to git-sync image specific configuration
+	Sync *SyncSpec `json:"sync,omitempty"`
 }
 
 func (s *GitSpec) validate(fp *field.Path) field.ErrorList {
