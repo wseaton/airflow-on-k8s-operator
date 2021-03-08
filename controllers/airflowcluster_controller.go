@@ -101,6 +101,7 @@ func (r *AirflowClusterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 // SetupWithManager - called by main
 func (r *AirflowClusterReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	_ = app.AddToScheme(r.Scheme)
+
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&alpha1.AirflowCluster{}).
 		Complete(acReconciler(mgr))
@@ -258,7 +259,7 @@ EOSQL
 	ss.Spec.Template.Spec.InitContainers = append(containers, ss.Spec.Template.Spec.InitContainers...)
 }
 
-func addPostgresUserDBContainer(r *alpha1.AirflowCluster, ss *appsv1.StatefulSet) {
+func addPostgresUserDBContainer(r *alpha1.AirflowCluster, ss *appsv1.StatefulSet, image_tag string) {
 	sqlRootSecret := common.RsrcName(r.Spec.AirflowBaseRef.Name, common.ValueAirflowComponentSQL, "")
 	sqlSvcName := common.RsrcName(r.Spec.AirflowBaseRef.Name, common.ValueAirflowComponentSQL, "")
 	sqlSecret := common.RsrcName(r.Name, common.ValueAirflowComponentUI, "")
@@ -273,7 +274,7 @@ func addPostgresUserDBContainer(r *alpha1.AirflowCluster, ss *appsv1.StatefulSet
 	containers := []corev1.Container{
 		{
 			Name:    "postgres-dbcreate",
-			Image:   alpha1.DefaultPostgresImage + ":" + alpha1.DefaultPostgresVersion,
+			Image:   image_tag,
 			Env:     env,
 			Command: []string{"/bin/bash"},
 			Args: []string{"-c", `
@@ -346,6 +347,7 @@ func getAirflowEnv(r *alpha1.AirflowCluster, saName string, base *alpha1.Airflow
 		{Name: "SQL_USER", Value: sp.Scheduler.DBUser},
 		{Name: "SQL_DB", Value: sp.Scheduler.DBName},
 		{Name: "DB_TYPE", Value: dbType},
+		{Name: "C_FORCE_ROOT", Value: sp.Worker.ForceRoot},
 	}
 	if sp.Executor == alpha1.ExecutorK8s {
 		env = append(env, []corev1.EnvVar{
@@ -560,7 +562,7 @@ func (s *UI) sts(o *reconciler.Object, v interface{}) {
 	}
 	sts.Spec.Template.Spec.Containers[0].Resources = r.Cluster.Spec.UI.Resources
 	if IsPostgres(&r.Base.Spec) {
-		addPostgresUserDBContainer(r.Cluster, sts)
+		addPostgresUserDBContainer(r.Cluster, sts, r.Base.Spec.Postgres.Image+":"+r.Base.Spec.Postgres.Version)
 	} else {
 		addMySQLUserDBContainer(r.Cluster, sts)
 	}
@@ -665,13 +667,16 @@ func gcsContainer(s *alpha1.GCSSpec, volName string) (bool, corev1.Container) {
 
 func gitContainer(s *alpha1.GitSpec, volName string) (bool, corev1.Container) {
 	init := false
+	image := alpha1.GitsyncImage + ":" + alpha1.GitsyncVersion
 	container := corev1.Container{}
 	env := []corev1.EnvVar{
 		{Name: "GIT_SYNC_REPO", Value: s.Repo},
 		{Name: "GIT_SYNC_DEST", Value: gitSyncDestDir},
 		{Name: "GIT_SYNC_BRANCH", Value: s.Branch},
+		{Name: "GIT_SYNC_ROOT", Value: "/tmp/git"},
 		{Name: "GIT_SYNC_ONE_TIME", Value: strconv.FormatBool(s.Once)},
 		{Name: "GIT_SYNC_REV", Value: s.Rev},
+		{Name: "HOME", Value: "/tmp"},
 	}
 	if s.CredSecretRef != nil {
 		env = append(env, []corev1.EnvVar{
@@ -680,12 +685,36 @@ func gitContainer(s *alpha1.GitSpec, volName string) (bool, corev1.Container) {
 			{Name: "GIT_SYNC_USERNAME", Value: s.User},
 		}...)
 	}
+	if s.VerifySsl != nil {
+		if *s.VerifySsl == false {
+			env = append(env, []corev1.EnvVar{
+				{Name: "GIT_SSL_NO_VERIFY", Value: "true"},
+			}...)
+		}
+	}
+
 	if s.Once {
 		init = true
 	}
+
+	if s.Sync != nil {
+		if s.Sync.Image != "" && s.Sync.Version != "" {
+			image = s.Sync.Image + ":" + s.Sync.Version
+		}
+		// do final env configuration via git-sync env overide option
+		var keys []string
+		for k := range s.Sync.Env {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+		for _, k := range keys {
+			env = append(env, corev1.EnvVar{Name: k, Value: s.Sync.Env[k]})
+		}
+	}
+
 	container = corev1.Container{
 		Name:    "git-sync",
-		Image:   alpha1.GitsyncImage + ":" + alpha1.GitsyncVersion,
+		Image:   image,
 		Env:     env,
 		Command: []string{"/git-sync"},
 		Ports: []corev1.ContainerPort{

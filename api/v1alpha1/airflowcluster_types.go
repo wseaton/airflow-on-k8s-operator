@@ -33,6 +33,8 @@ const (
 	defaultRedisImage       = "redis"
 	defaultRedisVersion     = "4.0"
 	defaultRedisPort        = "6379"
+	GitsyncImage            = "k8s.gcr.io/git-sync/git-sync"
+	GitsyncVersion          = "v3.2.2"
 	defaultFlowerImage      = "quay.io/opendatahub/docker-airflow"
 	defaultFlowerVersion    = "1.10.12-1"
 	defaultSchedulerImage   = "quay.io/opendatahub/docker-airflow"
@@ -41,8 +43,6 @@ const (
 	defaultUIVersion        = "1.10.12-1"
 	defaultWorkerImage      = "quay.io/opendatahub/docker-airflow"
 	defaultWorkerVersion    = "1.10.12-1"
-	GitsyncImage            = "gcr.io/google_containers/git-sync"
-	GitsyncVersion          = "v3.0.1"
 	GCSsyncImage            = "gcr.io/cloud-airflow-releaser/gcs-syncd"
 	GCSsyncVersion          = "cloud_composer_service_2018-05-23-RC0"
 	ExecutorLocal           = "Local"
@@ -51,6 +51,7 @@ const (
 	ExecutorK8s             = "Kubernetes"
 	defaultExecutor         = ExecutorLocal
 	defaultBranch           = "master"
+	defaultWorkerForceRoot  = "false"
 )
 
 var (
@@ -279,6 +280,8 @@ type WorkerSpec struct {
 	Replicas int32 `json:"replicas,omitempty"`
 	// Resources is the resource requests and limits for the pods.
 	Resources corev1.ResourceRequirements `json:"resources,omitempty"`
+	//Celery Worker force root
+	ForceRoot string `json:"forceroot,omitempty"`
 }
 
 func (s *WorkerSpec) validate(fp *field.Path) field.ErrorList {
@@ -307,6 +310,13 @@ func (s *GCSSpec) validate(fp *field.Path) field.ErrorList {
 	return errs
 }
 
+//SyncSpec defines attributes related to the git-sync container itself
+type SyncSpec struct {
+	Image   string            `json:"image,omitempty"`
+	Version string            `json:"tag,omitempty"`
+	Env     map[string]string `json:"env,omitempty"`
+}
+
 //GitSpec defines the atributed needed to sync from a git repo
 type GitSpec struct {
 	// Repo describes the http/ssh uri for git repo
@@ -319,8 +329,12 @@ type GitSpec struct {
 	User string `json:"user,omitempty"`
 	// Once syncs initially and quits (use init container instead of sidecar)
 	Once bool `json:"once,omitempty"`
+	// Configure git to ignore ssl (for use with self-signed certs)
+	VerifySsl *bool `json:"verify,omitempty"`
 	// Reference to git credentials (user, password, ssh etc)
 	CredSecretRef *corev1.LocalObjectReference `json:"cred,omitempty"`
+	// Reference to git-sync image specific configuration
+	Sync *SyncSpec `json:"sync,omitempty"`
 }
 
 func (s *GitSpec) validate(fp *field.Path) field.ErrorList {
@@ -570,6 +584,9 @@ func (b *AirflowCluster) ApplyDefaults() {
 		}
 		if b.Spec.Executor == ExecutorK8s {
 			b.Spec.Worker.Replicas = 0
+		}
+		if b.Spec.Worker.ForceRoot == "" {
+			b.Spec.Worker.ForceRoot = defaultWorkerForceRoot
 		}
 	}
 	if b.Spec.DAGs != nil {

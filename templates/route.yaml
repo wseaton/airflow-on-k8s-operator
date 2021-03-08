@@ -29,7 +29,11 @@ spec:
   to:
     kind: Service
     name: {{.SvcName}}
+    weight: 100
   port:
     {{range $k,$v := .Ports }}
     targetPort: {{$k}}
     {{end}}
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

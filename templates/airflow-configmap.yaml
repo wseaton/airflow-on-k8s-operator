@@ -1,11 +1,12 @@
-# Licensed to the Apache Software Foundation (ASF) under one or more
-# contributor license agreements.  See the NOTICE file distributed with
-# this work for additional information regarding copyright ownership.
-# The ASF licenses this file to You under the Apache License, Version 2.0
-# (the "License"); you may not use this file except in compliance with
-# the License.  You may obtain a copy of the License at
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements. See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership. The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License. You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#   http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -182,7 +183,7 @@ data:
     airflow_configmap = {{.Name}}
     worker_container_repository = {{.Cluster.Spec.Worker.Image}}
     worker_container_tag = {{.Cluster.Spec.Worker.Version}}
-    worker_container_image_pull_policy = IfNotPresent
+    worker_container_image_pull_policy = Always
     delete_worker_pods = True
     worker_service_account_name =
     git_repo = {{.Cluster.Spec.DAGs.Git.Repo}}
@@ -197,8 +198,8 @@ data:
     gcp_service_account_keys =
 
     # For cloning DAGs from git repositories into volumes: https://github.com/kubernetes/git-sync
-    git_sync_container_repository = gcr.io/google-containers/git-sync-amd64
-    git_sync_container_tag = v2.0.5
+    git_sync_container_repository = k8s.gcr.io/git-sync/git-sync
+    git_sync_container_tag = v3.2.2
     git_sync_init_container_name = git-sync-clone
 
     [kubernetes_node_selectors]

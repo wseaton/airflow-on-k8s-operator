@@ -21,32 +21,6 @@ rules:
 - apiGroups:
   - ""
   resources:
-  - pods
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - pods/exec
-  verbs:
-  - create
-  - get
-- apiGroups:
-  - ""
-  resources:
-  - pods/log
-  verbs:
-  - get
-  - list
-- apiGroups:
-  - ""
-  resources:
   - secrets
   verbs:
   - create
@@ -96,14 +70,6 @@ rules:
 - apiGroups:
   - airflow.apache.org
   resources:
-  - airflowbases/finalizers
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
-  - airflow.apache.org
-  resources:
   - airflowbases/status
   verbs:
   - get
@@ -122,14 +88,6 @@ rules:
   - patch
   - update
   - watch
-- apiGroups:
-  - airflow.apache.org
-  resources:
-  - airflowclusters/finalizers
-  verbs:
-  - get
-  - patch
-  - update
 - apiGroups:
   - airflow.apache.org
   resources:
@@ -178,30 +136,6 @@ rules:
   - rbac.authorization.k8s.io
   resources:
   - rolebindings
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - rbac.authorization.k8s.io
-  resources:
-  - roles
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - route.openshift.io
-  resources:
-  - routes
   verbs:
   - create
   - delete

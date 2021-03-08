@@ -691,6 +691,23 @@ spec:
                     user:
                       description: User for git access
                       type: string
+                    verify:
+                      description: Configure git to ignore ssl (for use with self-signed
+                        certs), false to ignore
+                      type: boolean
+                    sync:
+                      description: git-sync container related config
+                      properties:
+                        image:
+                          type: string
+                        tag:
+                          type: string
+                        env:
+                          additionalProperties:
+                            type: string
+                          description: kv pairs of env vars to set in the git-sync container 
+                          type: object
+                      type: object
                   required:
                   - repo
                   type: object
@@ -1492,6 +1509,9 @@ spec:
             worker:
               description: Spec for Airflow Workers
               properties:
+                forceroot:
+                  description: Celery Worker force root
+                  type: string
                 image:
                   description: Image defines the Airflow worker Docker image.
                   type: string

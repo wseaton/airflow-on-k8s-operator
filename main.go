@@ -42,7 +42,6 @@ func init() {
 	_ = airflowv1alpha1.AddToScheme(scheme)
 
 	_ = routev1.AddToScheme(scheme)
-
 	// +kubebuilder:scaffold:scheme
 }
 
